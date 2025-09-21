@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title || 'Local Community Portal' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo"><strong>Local</strong> Community</a>
+            <nav>
+                <a href="/" class="<%= (active === 'home') ? 'active' : '' %>">Home</a>
+                <a href="/areas/sports" class="<%= (active === 'sports') ? 'active' : '' %>">Sports</a>
+                <a href="/areas/health" class="<%= (active === 'health') ? 'active' : '' %>">Health</a>
+                <a href="/areas/education" class="<%= (active === 'education') ? 'active' : '' %>">Education</a>
+                <a href="/areas/arts" class="<%= (active === 'arts') ? 'active' : '' %>">Arts & Culture</a>
+                <a href="/faq" class="<%= (active === 'faq') ? 'active' : '' %>">FAQ</a>
+                <a href="/contact" class="<%= (active === 'contact') ? 'active' : '' %>">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <%- body %>
+    </main>
+
+    <footer class="container">
+        <p>&copy; <%= new Date().getFullYear() %> Local Community Portal</p>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+</html>

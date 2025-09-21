@@ -1,0 +1,17 @@
+<%- include('partials/header', { title: 'Activity • Local Community Portal', active: 'activity' }) %>
+
+<div class="page-content container">
+  <h1>Sports Date Quiz</h1>
+  <p class="subtitle">Pick the correct date for each sports-related event. No page reloads, keyboard friendly.</p>
+
+  <div id="quiz" class="card" aria-live="polite"></div>
+
+  <div class="card" style="margin-top:1rem; display:flex; gap:.75rem; align-items:center;">
+    <p><strong>Score:</strong> <span id="score">0</span></p>
+    <p><strong>Best:</strong> <span id="best">0</span></p>
+    <button id="restart" type="button">Restart</button>
+  </div>
+</div>
+
+<script src="/js/activity.js" defer></script>
+<%- include('partials/footer') %>

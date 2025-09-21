@@ -1,0 +1,23 @@
+<%- include('partials/header', { title: `${ev.title} • Local Community Portal`, active: active }) %>
+
+<div class="page-content container">
+  <div class="card">
+    <h1><%= ev.title %></h1>
+    <p class="meta">
+      <strong>Date:</strong>
+      <%= new Date(ev.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
+      • <strong>Area:</strong> <%= ev.area %>
+      <% if (ev.type) { %> • <strong>Type:</strong> <%= ev.type %> <% } %>
+    </p>
+    <% if (ev.isPast) { %>
+      <p class="warning">⚠️ This event has already occurred.</p>
+    <% } else { %>
+      <p class="success">✅ This event is upcoming.</p>
+    <% } %>
+    <% if (ev.venue) { %><p><strong>Venue:</strong> <%= ev.venue %></p><% } %>
+    <p><%= ev.description %></p>
+    <p><a href="/events">← Back to Events</a></p>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

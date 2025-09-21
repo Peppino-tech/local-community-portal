@@ -1,0 +1,34 @@
+<%- include('partials/header', { title: `${areaName} • Local Community Portal`, active: active }) %>
+
+<div class="page-content container">
+    <h1><%= areaName %></h1>
+
+    <div class="card area-description">
+        <% if (areaName === 'Sports') { %>
+            <p>Welcome to the Sports hub! Find local teams, upcoming matches, and fitness clubs right here in Chatham. Whether you want to play or watch, this is the place to start.</p>
+        <% } else if (areaName === 'Health') { %>
+            <p>Focus on your wellbeing. Discover local yoga classes, health workshops, support groups, and resources for a healthy mind and body in our community.</p>
+        <% } else if (areaName === 'Education') { %>
+            <p>Lifelong learning starts here. Browse workshops, evening classes at MidKent College, and training opportunities to learn a new skill or advance your career.</p>
+        <% } else if (areaName === 'Arts') { %>
+            <p>Explore your creative side! Find information on local art exhibitions at the Dockyard, theatre performances, music events, and cultural festivals happening in Medway.</p>
+        <% } %>
+    </div>
+
+    <h2 style="margin-top: 2rem;">Upcoming Events in <%= areaName %></h2>
+    <div class="grid">
+        <% if (events.length === 0) { %>
+            <div class="card"><p>No upcoming events scheduled for this area.</p></div>
+        <% } else { %>
+            <% events.forEach(event => { %>
+                <div class="card">
+                    <h3><%= event.title %></h3>
+                    <p class="meta"><strong>Date:</strong> <%= new Date(event.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }) %></p>
+                    <p><%= event.description %></p>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

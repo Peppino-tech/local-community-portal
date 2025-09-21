@@ -1,0 +1,91 @@
+<%- include('partials/header', { title: 'Home • Local Community Portal', active: 'home' }) %>
+
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to the Local Community Portal</h1>
+        <p class="subtitle">Your hub for local events, activities and services. Scroll down to explore.</p>
+    </div>
+</section>
+
+<section class="featured">
+  <div class="container">
+    <h2>Live Event</h2>
+    <% if (nextEvent) { %>
+      <div class="card">
+        <h3><a href="/events/<%= nextEvent.id %>"><%= nextEvent.title %></a></h3>
+        <p class="meta">
+          <strong>When:</strong>
+          <%= new Date(nextEvent.date).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) %>
+          &nbsp;•&nbsp;<strong>Area:</strong> <%= nextEvent.area %>
+        </p>
+        <p><%= nextEvent.description %></p>
+        <a class="btn-outline" href="/events/<%= nextEvent.id %>">View details</a>
+      </div>
+    <% } else { %>
+      <p>No upcoming event.</p>
+    <% } %>
+  </div>
+</section>
+
+<section class="upcoming-events">
+    <div class="container">
+        <h2>Upcoming Events</h2>
+        <div class="grid">
+            <% if (locals.upcomingEvents && upcomingEvents.length > 0) { %>
+                <% upcomingEvents.forEach(event => { %>
+                    <div class="card">
+                        <h3><%= event.title %></h3>
+                        <p class="meta"><strong>Date:</strong> <%= new Date(event.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                        <p><%= event.description %></p>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="card">
+                    <p>No upcoming events right now. Please check back soon!</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</section>
+
+<section id="sports" class="area-section">
+    <div class="image-frame">
+        <div class="area-content">
+            <h2>Sports</h2>
+            <p>Find local teams, upcoming matches, and fitness clubs right here in Chatham.</p>
+            <a href="/areas/sports" class="btn-outline">View Sports Events</a>
+        </div>
+    </div>
+</section>
+
+<section id="health" class="area-section">
+    <div class="image-frame">
+        <div class="area-content">
+            <h2>Health</h2>
+            <p>Discover local yoga classes, health workshops, and resources for a healthy mind and body.</p>
+            <a href="/areas/health" class="btn-outline">View Health Events</a>
+        </div>
+    </div>
+</section>
+
+<section id="education" class="area-section">
+    <div class="image-frame">
+        <div class="area-content">
+            <h2>Education</h2>
+            <p>Browse workshops, evening classes, and training opportunities to learn a new skill.</p>
+            <a href="/areas/education" class="btn-outline">View Education Events</a>
+        </div>
+    </div>
+</section>
+
+<section id="arts" class="area-section">
+    <div class="image-frame">
+        <div class="area-content">
+            <h2>Arts & Culture</h2>
+            <p>Explore your creative side with local art exhibitions, theatre performances, and music events.</p>
+            <a href="/areas/arts" class="btn-outline">View Arts Events</a>
+        </div>
+    </div>
+</section>
+
+<%- include('partials/footer') %>
