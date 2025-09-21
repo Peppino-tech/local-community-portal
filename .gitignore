@@ -1,0 +1,19 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+
+# OS/editor
+.DS_Store
+Thumbs.db
+
+# Local data
+.env
+*.sqlite
+*.db-journal
+*.db
+
+# Keep your seeded DB off GitHub (still include it in your SOL ZIP)
+community.db
+
