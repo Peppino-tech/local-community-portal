@@ -104,3 +104,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // (keep any other page JS here)
 });
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.nav-toggle');
+  if (!btn) return;
+  const links = document.querySelector('.nav-links');
+  const open = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', String(!open));
+  links.style.display = open ? '' : 'flex';
+});
