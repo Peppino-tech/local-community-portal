@@ -453,3 +453,64 @@ nav ul { display: flex; gap: .75rem; list-style: none; padding: 0; margin: 0; }
   margin-top: .5rem;
   min-height: 1.2em; /* reserves space so layout doesn't jump */
 }
+
+/* === Events filters layout & controls === */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.filters-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.filters-row select,
+.filters-row input[type="search"],
+.filters-row input[type="text"] {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: var(--border-radius, 8px);
+  background: #fff;
+  min-width: 180px;
+}
+
+.filters-row .checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.filters-row input[type="search"] {
+  width: 100%;
+}
+
+.grow {
+  flex: 1 1 320px; /* lets search stretch on wide screens */
+}
+
+.pager {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* hide-only-visually helper for screen-reader text */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap; border: 0;
+}
