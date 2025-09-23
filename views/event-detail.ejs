@@ -1,23 +1,30 @@
-<%- include('partials/header', { title: `${ev.title} • Local Community Portal`, active: active }) %>
+<%- include('partials/header', { title: (ev?.title ? ev.title + ' • ' : '') + 'Local Community Portal', active: 'events' }) %>
 
-<div class="page-content container">
-  <div class="card">
-    <h1><%= ev.title %></h1>
-    <p class="meta">
-      <strong>Date:</strong>
-      <%= new Date(ev.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
-      • <strong>Area:</strong> <%= ev.area %>
-      <% if (ev.type) { %> • <strong>Type:</strong> <%= ev.type %> <% } %>
-    </p>
-    <% if (ev.isPast) { %>
-      <p class="warning">⚠️ This event has already occurred.</p>
-    <% } else { %>
-      <p class="success">✅ This event is upcoming.</p>
-    <% } %>
+<section class="container page-content">
+  <article class="card">
+    <header>
+      <h1><%= ev.title %></h1>
+      <p class="meta">
+        <strong>Date:</strong>
+        <time datetime="<%= ev.date %>">
+          <%= new Date(ev.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
+        </time>
+        <% if (ev.area) { %> • <strong>Area:</strong> <%= ev.area %><% } %>
+        <% if (ev.type) { %> • <strong>Type:</strong> <%= ev.type %><% } %>
+      </p>
+      <% if (ev.isPast) { %>
+        <p class="badge badge-past" aria-label="This event has already occurred">Past event</p>
+      <% } else { %>
+        <p class="badge badge-upcoming" aria-label="This event is upcoming">Upcoming</p>
+      <% } %>
+    </header>
+
     <% if (ev.venue) { %><p><strong>Venue:</strong> <%= ev.venue %></p><% } %>
+    <% if (ev.summary) { %><p><em><%= ev.summary %></em></p><% } %>
     <p><%= ev.description %></p>
-    <p><a href="/events">← Back to Events</a></p>
-  </div>
-</div>
+
+    <p style="margin-top:16px;"><a href="/events">← Back to Events</a></p>
+  </article>
+</section>
 
 <%- include('partials/footer') %>
