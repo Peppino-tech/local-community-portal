@@ -1,124 +1,81 @@
+/* global fetch */
 document.addEventListener("DOMContentLoaded", () => {
-  const contactForm = document.querySelector("#contact-form");
-  const errorContainer = document.querySelector("#form-error");
+  // ----- Contact form: client-side validation + progressive enhancement (AJAX) -----
+  const form = document.querySelector("#contact-form");
+  const errorEl = document.querySelector("#form-error");
 
-  if (contactForm) {
-    contactForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); // stay on page
-      if (errorContainer) errorContainer.textContent = ""; // clear
+  function setError(msg) {
+    if (errorEl) {
+      errorEl.textContent = msg || "";
+      errorEl.style.display = msg ? "block" : "none";
+    }
+  }
 
-      const formData = new FormData(contactForm);
+  function validate(payload) {
+    const name = String(payload.name || "").trim();
+    const email = String(payload.email || "").trim();
+    const subject = String(payload.subject || "").trim();
+    const message = String(payload.message || "").trim();
+    if (!name || !email || !subject || !message) {
+      return "Please fill in all fields.";
+    }
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailOk) return "Please enter a valid email address.";
+    if (message.length < 10) return "Message should be at least 10 characters.";
+    return "";
+  }
+
+  async function ajaxSubmit(payload) {
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        throw new Error((data && data.error) || "Something went wrong.");
+      }
+      return { ok: true };
+    } catch (err) {
+      return { ok: false, error: err.message || "Network error." };
+    }
+  }
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      // Progressive enhancement: try AJAX first; if it fails, normal POST still works
+      e.preventDefault();
+      setError("");
+
+      const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
 
-      // Client-side validation
-      const name = (payload.name || "").trim();
-      const email = (payload.email || "").trim();
-      const subject = (payload.subject || "").trim();
-      const message = (payload.message || "").trim();
-      const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-      let err = "";
-      if (!name || !email || !subject || !message) err = "Please fill in all fields.";
-      else if (!isEmailValid) err = "Please provide a valid email address.";
-      else if (message.length < 10) err = "Your message is a bit short (min 10 chars).";
-
-      if (err) {
-        if (errorContainer) errorContainer.textContent = err;
+      const problem = validate(payload);
+      if (problem) {
+        setError(problem);
         return;
       }
 
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          if (errorContainer) errorContainer.textContent = (data && data.error) ? data.error : "Something went wrong.";
-          return;
-        }
-
-        // Success UX
-        contactForm.reset();
-        if (errorContainer) errorContainer.textContent = "✅ Thanks! Your message has been received.";
-      } catch {
-        if (errorContainer) errorContainer.textContent = "Network error. Please try again.";
-      }
-    });
-  }
-
-  // (keep any other page JS here)
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const contactForm = document.querySelector("#contact-form");
-  const errorContainer = document.querySelector("#form-error");
-
-  if (contactForm) {
-    contactForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); // stay on page
-      if (errorContainer) errorContainer.textContent = ""; // clear
-
-      const formData = new FormData(contactForm);
-      const payload = Object.fromEntries(formData.entries());
-
-      // Client-side validation
-      const name = (payload.name || "").trim();
-      const email = (payload.email || "").trim();
-      const subject = (payload.subject || "").trim();
-      const message = (payload.message || "").trim();
-      const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-      let err = "";
-      if (!name || !email || !subject || !message) err = "Please fill in all fields.";
-      else if (!isEmailValid) err = "Please provide a valid email address.";
-      else if (message.length < 10) err = "Your message is a bit short (min 10 chars).";
-
-      if (err) {
-        if (errorContainer) errorContainer.textContent = err;
+      const result = await ajaxSubmit(payload);
+      if (!result.ok) {
+        setError(result.error);
         return;
       }
 
-      try {
-        const res = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (!res.ok || !data.ok) {
-          if (errorContainer) errorContainer.textContent = (data && data.error) ? data.error : "Something went wrong.";
-          return;
-        }
-
-        // Success UX
-        contactForm.reset();
-        if (errorContainer) errorContainer.textContent = "✅ Thanks! Your message has been received.";
-      } catch {
-        if (errorContainer) errorContainer.textContent = "Network error. Please try again.";
-      }
+      // Success UX
+      form.reset();
+      setError("✅ Thanks! Your message has been received.");
     });
   }
 
-  
-});
-
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.nav-toggle');
-  if (!btn) return;
-  const links = document.querySelector('.nav-links');
-  const open = btn.getAttribute('aria-expanded') === 'true';
-  btn.setAttribute('aria-expanded', String(!open));
-  links.style.display = open ? '' : 'flex';
-});
-
-// Mobile menu toggle
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('.nav-toggle');
-  if (!btn) return;
-  const links = document.querySelector('.nav-links');
-  const open = links.classList.toggle('is-open');
-  btn.setAttribute('aria-expanded', String(open));
+  // ----- Mobile nav toggle (if present) -----
+  const navToggle = document.querySelector(".nav-toggle");
+  const navLinks  = document.querySelector(".nav-links");
+  if (navToggle && navLinks) {
+    navToggle.addEventListener("click", () => {
+      const open = navLinks.classList.toggle("is-open");
+      navToggle.setAttribute("aria-expanded", String(open));
+    });
+  }
 });
