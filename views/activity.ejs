@@ -1,17 +1,28 @@
 <%- include('partials/header', { title: 'Activity • Local Community Portal', active: 'activity' }) %>
 
-<div class="page-content container">
-  <h1>Sports Date Quiz</h1>
-  <p class="subtitle">Pick the correct date for each sports-related event. No page reloads, keyboard friendly.</p>
+<section class="container page-content">
+  <h1 id="quiz-title">Sports Date Quiz</h1>
+  <p id="quiz-desc" class="subtitle">
+    Pick the correct date for each sports-related event. No page reloads; fully keyboard friendly.
+  </p>
 
-  <div id="quiz" class="card" aria-live="polite"></div>
+  <!-- Live quiz region -->
+  <div
+    id="quiz"
+    class="card"
+    role="region"
+    aria-labelledby="quiz-title"
+    aria-describedby="quiz-desc"
+    aria-live="polite"
+  ></div>
 
-  <div class="card" style="margin-top:1rem; display:flex; gap:.75rem; align-items:center;">
+  <!-- Stats / controls -->
+  <div class="card quiz-stats">
     <p><strong>Score:</strong> <span id="score">0</span></p>
     <p><strong>Best:</strong> <span id="best">0</span></p>
-    <button id="restart" type="button">Restart</button>
+    <button id="restart" type="button" aria-controls="quiz" aria-label="Restart the quiz">Restart</button>
   </div>
-</div>
+</section>
 
 <script src="/js/activity.js" defer></script>
 <%- include('partials/footer') %>
