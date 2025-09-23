@@ -1,124 +1,127 @@
 // public/js/events.js
 (function () {
-  const list   = document.getElementById('eventsList');
-  const form   = document.getElementById('eventsFilters');
-  const year   = document.getElementById('ev-year');
-  const area   = document.getElementById('ev-area');
-  const type   = document.getElementById('ev-type');
-  const q      = document.getElementById('ev-q');
-  const past   = document.getElementById('ev-past');
-  const prev   = document.getElementById('ev-prev');
-  const next   = document.getElementById('ev-next');
-  const summary= document.getElementById('ev-summary');
+  const list    = document.getElementById('eventsList');
+  const form    = document.getElementById('eventsFilters');
+  const yearEl  = document.getElementById('ev-year');
+  const areaEl  = document.getElementById('ev-area');
+  const typeEl  = document.getElementById('ev-type');
+  const qEl     = document.getElementById('ev-q');
+  const pastEl  = document.getElementById('ev-past');
+  const prevBtn = document.getElementById('ev-prev');
+  const nextBtn = document.getElementById('ev-next');
+  const summary = document.getElementById('ev-summary');
+
+  if (!list || !form) return;
 
   let page = 1;
   const limit = 12;
 
-  // Restore filters from URL on first load
-  (function restoreFromURL(){
+  function paramsFromUI() {
+    return {
+      year:    yearEl?.value || "",
+      area_id: areaEl?.value || "",
+      type_id: typeEl?.value || "",
+      q:       qEl?.value || "",
+      past:    pastEl?.checked ? "1" : "0",
+      page:    String(page),
+      limit:   String(limit)
+    };
+  }
+
+  function updateURL(params) {
     const url = new URL(location.href);
-    const get = k => url.searchParams.get(k) || '';
-    year.value = get('year');
-    area.value = get('area_id');
-    type.value = get('type_id');
-    q.value    = get('q');
-    const p    = url.searchParams.get('past');
-    if (p === 'true' || p === 'false' || p === '') past.value = p ?? 'false';
-    page = +(url.searchParams.get('page') || 1);
-  })();
-
-  function debounce(fn, ms=350){
-    let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
-  }
-
-  function buildParams() {
-    const sp = new URLSearchParams();
-    if (year.value) sp.set('year', year.value);
-    if (area.value) sp.set('area_id', area.value);
-    if (type.value) sp.set('type_id', type.value);
-    if (q.value.trim()) sp.set('q', q.value.trim());
-    if (past.value === 'true') sp.set('past', 'true');
-    if (past.value === 'false') sp.set('past', 'false');
-    sp.set('page', String(page));
-    sp.set('limit', String(limit));
-    return sp;
-  }
-
-  function pushURL() {
-    const sp = buildParams();
-    const url = `${location.pathname}?${sp.toString()}`;
-    history.pushState(null, '', url);
-  }
-
-  function render(items) {
-    if (!items.length) {
-      list.innerHTML = `<p style="grid-column:1/-1; color:#64748b;">No events match your filters.</p>`;
-      return;
-    }
-    list.innerHTML = items.map(ev => `
-      <article class="card">
-        <header class="card-head">
-          <h3>${escapeHtml(ev.title)}</h3>
-          <small>${fmt(ev.date)} &middot; ${escapeHtml(ev.area || '')} ${ev.isPast ? '<span class="badge">Past</span>' : ''}</small>
-        </header>
-        <p>${escapeHtml(ev.description || '').slice(0, 180)}${(ev.description||'').length>180?'…':''}</p>
-        <footer class="card-foot">
-          <a class="btn" href="/events/${ev.id}">View details</a>
-        </footer>
-      </article>
-    `).join('');
+    Object.entries(params).forEach(([k, v]) => {
+      if (v && v !== "0") url.searchParams.set(k, v);
+      else url.searchParams.delete(k);
+    });
+    history.replaceState({}, "", url.toString());
   }
 
   async function load() {
-    list.setAttribute('aria-busy', 'true');
+    const params = paramsFromUI();
+    updateURL(params);
+    const qs = new URLSearchParams(params).toString();
+
+    list.innerHTML = "<p>Loading…</p>";
     try {
-      const sp = buildParams();
-      const res = await fetch(`/api/events?${sp.toString()}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const res = await fetch(`/api/events?${qs}`, { headers: { "Accept": "application/json" } });
       const data = await res.json();
-      render(data.items || []);
-      const total = +data.total || 0;
-      const maxPage = Math.max(1, Math.ceil(total / limit));
-      prev.disabled = page <= 1;
-      next.disabled = page >= maxPage;
-      summary.textContent = total ? `${total} event${total===1?'':'s'} found` : '';
-      pushURL();
+      if (!res.ok || !Array.isArray(data.items)) {
+        throw new Error((data && data.error) || "Failed to load events.");
+      }
+      render(data.items, data.total || data.items.length);
     } catch (err) {
-      console.error(err);
-      list.innerHTML = `<p style="grid-column:1/-1; color:#b91c1c;">Could not load events. ${escapeHtml(err.message||err)}</p>`;
-    } finally {
-      list.removeAttribute('aria-busy');
+      list.innerHTML = `<p class="error-message">${escapeHtml(err.message)}</p>`;
     }
   }
 
-  // Events
-  form.addEventListener('change', () => { page = 1; load(); });
-  q.addEventListener('input', debounce(() => { page = 1; load(); }, 300));
-  prev.addEventListener('click', () => { if (page>1) { page--; load(); } });
-  next.addEventListener('click', () => { page++; load(); });
+  function isPast(isoDate) {
+    const d = new Date(isoDate);
+    const today = new Date();
+    d.setHours(0,0,0,0);
+    today.setHours(0,0,0,0);
+    return d < today;
+  }
 
-  window.addEventListener('popstate', () => {
-    // When user presses back/forward, re-parse URL and reload
+  function render(items, total) {
+    summary.textContent = `${total} result${total === 1 ? "" : "s"}${qEl && qEl.value ? ` for “${qEl.value}”` : ""}`;
+
+    if (!items.length) {
+      list.innerHTML = "<p>No events match your filters.</p>";
+      return;
+    }
+
+    list.innerHTML = items.map(ev => {
+      const pastBadge = (typeof ev.isPast === "boolean" ? ev.isPast : isPast(ev.date))
+        ? `<span class="badge badge-past" aria-label="Past event">Past</span>`
+        : `<span class="badge badge-upcoming" aria-label="Upcoming event">Upcoming</span>`;
+
+      return `
+        <article class="card">
+          <h3><a href="/events/${encodeURIComponent(ev.id)}">${escapeHtml(ev.title)}</a></h3>
+          <p class="meta">
+            <time datetime="${escapeHtml(ev.date)}">${fmt(ev.date)}</time>
+            • ${escapeHtml(ev.area || "")}
+            ${ev.type ? ` • ${escapeHtml(ev.type)}` : ""}
+          </p>
+          <p>${escapeHtml(ev.summary || ev.description || "").slice(0,160)}${(ev.summary||ev.description||"").length>160?"…":""}</p>
+          <div class="labels">${pastBadge}</div>
+        </article>`;
+    }).join("");
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+  }
+
+  // Wire up controls
+  form.addEventListener("change", () => { page = 1; load(); });
+  qEl && qEl.addEventListener("input", debounce(() => { page = 1; load(); }, 250));
+  prevBtn && prevBtn.addEventListener("click", () => { if (page > 1) { page--; load(); } });
+  nextBtn && nextBtn.addEventListener("click", () => { page++; load(); });
+
+  // Handle back/forward navigation
+  window.addEventListener("popstate", () => {
     const u = new URL(location.href);
-    year.value = u.searchParams.get('year') || '';
-    area.value = u.searchParams.get('area_id') || '';
-    type.value = u.searchParams.get('type_id') || '';
-    q.value    = u.searchParams.get('q') || '';
-    const p    = u.searchParams.get('past');
-    past.value = (p === 'true' || p === 'false') ? p : '';
-    page = +(u.searchParams.get('page') || 1);
+    yearEl && (yearEl.value = u.searchParams.get('year') || '');
+    areaEl && (areaEl.value = u.searchParams.get('area_id') || '');
+    typeEl && (typeEl.value = u.searchParams.get('type_id') || '');
+    qEl && (qEl.value = u.searchParams.get('q') || '');
+    pastEl && (pastEl.checked = u.searchParams.get('past') === '1');
+    page = parseInt(u.searchParams.get('page') || '1', 10) || 1;
     load();
   });
 
   // Helpers
   function fmt(iso) {
-    try { return new Date(iso).toLocaleDateString(undefined, {year:'numeric', month:'short', day:'numeric'}); }
+    try { return new Date(iso).toLocaleDateString('en-GB', {year:'numeric', month:'short', day:'numeric'}); }
     catch { return iso; }
   }
   function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;'}[c]));
   }
 
   // Initial load
-  document.addEventListener('DOMContentLoaded', load);
+  document.addEventListener("DOMContentLoaded", load);
 })();
