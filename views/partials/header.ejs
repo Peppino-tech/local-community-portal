@@ -5,42 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= title ? `${title} – Local Community Portal` : 'Local Community Portal' %></title>
 
-  <!-- Optional: modern fonts (remove if you prefer system fonts) -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-
-  <!-- Your main stylesheet -->
   <link rel="stylesheet" href="/css/style.css">
-  <!-- Optional: a favicon if you have one -->
-  <!-- <link rel="icon" href="/images/favicon.png"> -->
-
-  <!-- Mobile-nav small helper (safe to keep even if empty) -->
   <script src="/js/script.js" defer></script>
 </head>
 <body>
 
 <header class="site-nav">
   <div class="container nav-inner">
-    <a class="brand" href="/">Local Community Portal</a>
+    <!-- Brand (hard-left). Remove <img> if you don't want a photo -->
+    <a class="brand" href="/" aria-label="Local Community Portal" style="margin-right:auto">
+      <img src="/images/me.jpg" alt="" class="avatar" width="36" height="36">
+      <span>Local Community Portal</span>
+    </a>
 
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <!-- Mobile menu toggle (hidden on desktop via CSS) -->
+    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav">☰</button>
 
-    <nav class="nav-links" role="navigation" aria-label="Main">
-      <a href="/"                 class="<%= active === 'home'       ? 'active' : '' %>">Home</a>
-      <a href="/areas/sports"     class="<%= active === 'sports'     ? 'active' : '' %>">Sports</a>
-      <a href="/areas/health"     class="<%= active === 'health'     ? 'active' : '' %>">Health</a>
-      <a href="/areas/education"  class="<%= active === 'education'  ? 'active' : '' %>">Education</a>
-      <a href="/areas/arts"       class="<%= active === 'arts'       ? 'active' : '' %>">Arts &amp; Culture</a>
-      <a href="/events"           class="<%= active === 'events'     ? 'active' : '' %>">Events</a>
-      <a href="/activity"         class="<%= active === 'activity'   ? 'active' : '' %>">Activity</a>
-      <a href="/faq"              class="<%= active === 'faq'        ? 'active' : '' %>">FAQ</a>
-      <a href="/contact"          class="<%= active === 'contact'    ? 'active' : '' %>">Contact</a>
+    <!-- Main navigation -->
+    <nav id="main-nav" class="nav-links" role="navigation" aria-label="Main">
+      <a href="/"                class="<%= active === 'home'       ? 'active' : '' %>">Home</a>
+      <a href="/areas/sports"    class="<%= active === 'sports'     ? 'active' : '' %>">Sports</a>
+      <a href="/areas/health"    class="<%= active === 'health'     ? 'active' : '' %>">Health</a>
+      <a href="/areas/education" class="<%= active === 'education'  ? 'active' : '' %>">Education</a>
+      <a href="/areas/arts"      class="<%= active === 'arts'       ? 'active' : '' %>">Arts &amp; Culture</a>
+      <a href="/events"          class="<%= active === 'events'     ? 'active' : '' %>">Events</a>
+      <a href="/activity"        class="<%= active === 'activity'   ? 'active' : '' %>">Activity</a>
+      <a href="/faq"             class="<%= active === 'faq'        ? 'active' : '' %>">FAQ</a>
+      <a href="/contact"         class="<%= active === 'contact'    ? 'active' : '' %>">Contact</a>
     </nav>
   </div>
 </header>
 
-<!-- Optional page hero background; safe to leave in -->
+<!-- Optional banner/hero strip under the nav -->
 <div class="hero"></div>
 
-<!-- Open a main wrapper so pages can drop content inside -->
+<!-- Page content starts -->
 <main>

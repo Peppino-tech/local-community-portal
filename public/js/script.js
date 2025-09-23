@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // (keep any other page JS here)
+  
 });
 
 document.addEventListener('click', (e) => {
@@ -112,4 +112,13 @@ document.addEventListener('click', (e) => {
   const open = btn.getAttribute('aria-expanded') === 'true';
   btn.setAttribute('aria-expanded', String(!open));
   links.style.display = open ? '' : 'flex';
+});
+
+// Mobile menu toggle
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.nav-toggle');
+  if (!btn) return;
+  const links = document.querySelector('.nav-links');
+  const open = links.classList.toggle('is-open');
+  btn.setAttribute('aria-expanded', String(open));
 });

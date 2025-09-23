@@ -1,12 +1,13 @@
-<%- include('partials/header', { title: 'Events • Local Community Portal', active: active }) %>
+<%- include('partials/header', { title: 'Events', active: 'events' }) %>
 
-<div class="page-content container">
+<section class="container">
   <h1>Events</h1>
 
-  <form id="filters" class="card" onsubmit="return false;">
-    <div class="grid">
+  <div class="card" style="margin:18px 0;">
+    <form id="eventsFilters" class="filters" onsubmit="return false">
       <label>Year
-        <select name="year">
+        <select id="ev-year" name="year">
+          <option value="">All</option>
           <% years.forEach(y => { %>
             <option value="<%= y %>" <%= y === currentYear ? 'selected' : '' %>><%= y %></option>
           <% }) %>
@@ -14,7 +15,7 @@
       </label>
 
       <label>Area
-        <select name="area_id">
+        <select id="ev-area" name="area_id">
           <option value="">All</option>
           <% areas.forEach(a => { %>
             <option value="<%= a.id %>"><%= a.name %></option>
@@ -23,7 +24,7 @@
       </label>
 
       <label>Type
-        <select name="type_id">
+        <select id="ev-type" name="type_id">
           <option value="">All</option>
           <% types.forEach(t => { %>
             <option value="<%= t.id %>"><%= t.name %></option>
@@ -31,27 +32,29 @@
         </select>
       </label>
 
-      <label>Search
-        <input type="search" name="q" placeholder="Search events…">
+      <label style="flex:1 1 220px;">Search
+        <input id="ev-q" type="text" placeholder="Search events…">
       </label>
 
       <label>Show
-        <select name="past">
-          <option value="">All</option>
+        <select id="ev-past" name="past" title="Past/Upcoming">
           <option value="false" selected>Upcoming</option>
           <option value="true">Past</option>
+          <option value="">All</option>
         </select>
       </label>
-    </div>
-  </form>
-
-  <div id="results" class="grid" aria-live="polite"></div>
-  <div class="pagination" style="display:flex; gap: .5rem; align-items:center; margin-top:1rem;">
-    <button id="prev" disabled>Previous</button>
-    <span id="pageInfo"></span>
-    <button id="next" disabled>Next</button>
+    </form>
   </div>
-</div>
 
-<script src="/js/events.js" defer></script>
+  <div id="ev-summary" style="margin:8px 0 12px; color:var(--muted)"></div>
+
+  <div id="eventsList" class="card-grid" aria-live="polite"></div>
+
+  <div style="display:flex; gap:14px; margin-top:18px;">
+    <button id="ev-prev" class="btn btn-outline" type="button">Previous</button>
+    <button id="ev-next" class="btn" type="button">Next</button>
+  </div>
+</section>
+
+<script src="/js/events.js"></script>
 <%- include('partials/footer') %>
