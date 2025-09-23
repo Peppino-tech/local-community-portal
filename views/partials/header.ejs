@@ -1,43 +1,56 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><%= title ? `${title} – Local Community Portal` : 'Local Community Portal' %></title>
-
-  <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/script.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title><%= (typeof title !== 'undefined' && title) ? title : 'Local Community Portal' %></title>
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
+  <!-- Skip link for keyboard/screen reader users -->
+  <a href="#main" class="skip-link">Skip to main content</a>
 
-<header class="site-nav">
-  <div class="container nav-inner">
-    <!-- Brand (hard-left). Remove <img> if you don't want a photo -->
-    <a class="brand" href="/" aria-label="Local Community Portal" style="margin-right:auto">
-      <img src="/images/me.jpg" alt="" class="avatar" width="36" height="36">
-      <span>Local Community Portal</span>
-    </a>
+  <!-- Site Header -->
+  <header role="banner" class="site-header">
+    <div class="container nav-inner">
+      <!-- Brand -->
+      <a href="/" class="brand" aria-label="Local Community home">
+        <strong>Local</strong> Community
+      </a>
 
-    <!-- Mobile menu toggle (hidden on desktop via CSS) -->
-    <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="main-nav">☰</button>
+      <!-- Mobile hamburger -->
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+        aria-controls="primary-navigation"
+      >
+        ☰
+      </button>
 
-    <!-- Main navigation -->
-    <nav id="main-nav" class="nav-links" role="navigation" aria-label="Main">
-      <a href="/"                class="<%= active === 'home'       ? 'active' : '' %>">Home</a>
-      <a href="/areas/sports"    class="<%= active === 'sports'     ? 'active' : '' %>">Sports</a>
-      <a href="/areas/health"    class="<%= active === 'health'     ? 'active' : '' %>">Health</a>
-      <a href="/areas/education" class="<%= active === 'education'  ? 'active' : '' %>">Education</a>
-      <a href="/areas/arts"      class="<%= active === 'arts'       ? 'active' : '' %>">Arts &amp; Culture</a>
-      <a href="/events"          class="<%= active === 'events'     ? 'active' : '' %>">Events</a>
-      <a href="/activity"        class="<%= active === 'activity'   ? 'active' : '' %>">Activity</a>
-      <a href="/faq"             class="<%= active === 'faq'        ? 'active' : '' %>">FAQ</a>
-      <a href="/contact"         class="<%= active === 'contact'    ? 'active' : '' %>">Contact</a>
-    </nav>
-  </div>
-</header>
+      <!-- Primary navigation -->
+      <nav
+        id="primary-navigation"
+        class="nav-links site-nav"
+        role="navigation"
+        aria-label="Primary"
+      >
+        <a href="/"                 class="<%= (active === 'home') ? 'active' : '' %>">Home</a>
+        <a href="/areas/sports"     class="<%= (active === 'sports') ? 'active' : '' %>">Sports</a>
+        <a href="/areas/health"     class="<%= (active === 'health') ? 'active' : '' %>">Health</a>
+        <a href="/areas/education"  class="<%= (active === 'education') ? 'active' : '' %>">Education</a>
+        <a href="/areas/arts"       class="<%= (active === 'arts') ? 'active' : '' %>">Arts &amp; Culture</a>
+        <a href="/events"           class="<%= (active === 'events') ? 'active' : '' %>">Events</a>
+        <a href="/faq"              class="<%= (active === 'faq') ? 'active' : '' %>">FAQ</a>
+        <a href="/contact"          class="<%= (active === 'contact') ? 'active' : '' %>">Contact</a>
+        <a href="/activity"         class="<%= (active === 'activity') ? 'active' : '' %>">Activity</a>
+      </nav>
+    </div>
+  </header>
 
-<!-- Optional banner/hero strip under the nav -->
-<div class="hero"></div>
-
-<!-- Page content starts -->
-<main>
+  <!-- Main content -->
+  <main id="main" role="main">
