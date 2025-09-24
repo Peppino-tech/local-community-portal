@@ -25,15 +25,16 @@
 }
 *{ box-sizing:border-box; margin:0; padding:0; }
 
-/* 2) Base & Layout */
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  line-height:1.6;
-  color:var(--text-color);
-  background:var(--background-color);
-  min-height:100vh;
-  display:flex; flex-direction:column;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background: url('/images/background.jpg') center center / cover no-repeat fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
 main{ flex-grow:1; }
 .container{ max-width:var(--container-width); margin:0 auto; padding:0 1rem; }
 img,video{ max-width:100%; height:auto; }
@@ -232,4 +233,200 @@ footer{
 }
 @media (prefers-reduced-motion:reduce){
   *{ animation:none !important; transition:none !important; }
+}
+/* === Home intro panel === */
+.intro-panel{
+  background:#f5f7fb; /* soft grey */
+  padding: 3rem 0;
+}
+.intro-inner{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.intro-copy .lead{
+  margin: .5rem 0 1rem;
+  color: var(--light-text);
+  max-width: 48ch;
+}
+.btn.btn-primary{
+  background: var(--brand-color);
+  color: #fff;
+  border: none;
+  padding: .8rem 1.2rem;
+  border-radius: var(--border-radius);
+  display: inline-block;
+  text-decoration: none;
+}
+.eyebrow{
+  text-transform: uppercase;
+  font-size: .75rem;
+  letter-spacing: .06em;
+  color: #6b7280;
+  margin-bottom: .25rem;
+}
+.card.highlight{
+  background: #fff;
+  border: 1px solid var(--border-color);
+}
+.card-title{ margin: .25rem 0 .5rem; }
+.intro-events .upcoming-mini{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.card.mini{ padding: 1rem; }
+
+/* === Areas grid (2 per row, grows to 3 on wide) === */
+.areas-section{ padding: 2.5rem 0; text-align: center; }
+.areas-section .muted{ color: var(--light-text); margin-bottom: 1rem; }
+.areas-grid{
+  margin-top: 1rem;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.area-card{ text-align: left; }
+
+/* Responsive tweaks for intro + areas */
+@media (max-width: 900px){
+  .intro-inner{ grid-template-columns: 1fr; }
+}
+@media (max-width: 640px){
+  .intro-events .upcoming-mini{ grid-template-columns: 1fr; }
+  .areas-grid{ grid-template-columns: 1fr; }
+}
+@media (min-width: 1200px){
+  .areas-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Intro: force single column for the welcome block */
+.intro-inner.one-col {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+/* Events block beneath intro */
+.intro-events-block {
+  padding: 1rem 0 2rem;
+}
+
+/* Ensure the mini cards form two columns on medium+ screens */
+.intro-events-block .upcoming-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .intro-events-block .upcoming-mini { grid-template-columns: 1fr; }
+}
+
+/* Center the welcome block on the intro panel */
+.intro-panel .intro-copy{
+  max-width: 720px;
+  margin: 0 auto;            /* centers the block */
+  text-align: center;        /* centers the text */
+}
+.intro-panel .intro-copy .lead{
+  margin-left: auto;
+  margin-right: auto;
+}
+.intro-panel .btn.btn-primary{
+  display: inline-block;
+  margin: 1rem auto 0;       /* centers the button under the text */
+}
+
+/* --- Unify link color for cards/titles (events + areas) --- */
+:root{
+  --link-color: #6d28d9;        /* purple */
+  --link-color-hover: #5b21b6;  /* a bit darker on hover */
+}
+
+/* Featured + upcoming cards (under the welcome) */
+.intro-events-block .card a,
+.intro-events-block .card a:visited{
+  color: var(--link-color);
+  text-decoration: underline;
+}
+.intro-events-block .card a:hover,
+.intro-events-block .card a:focus{
+  color: var(--link-color-hover);
+}
+
+/* If you still use the "Upcoming Events" strip anywhere */
+.upcoming-events .card a,
+.upcoming-events .card a:visited{
+  color: var(--link-color);
+  text-decoration: underline;
+}
+.upcoming-events .card a:hover,
+.upcoming-events .card a:focus{
+  color: var(--link-color-hover);
+}
+
+/* Area cards: make the titles purple too */
+.areas-section .card h3{
+  color: var(--link-color);
+}
+
+/* Center the single last card in the upcoming mini grid */
+.intro-events-block .upcoming-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.intro-events-block .upcoming-mini > .card:last-child{
+  grid-column: 1 / -1;      /* span full row */
+  max-width: 520px;          /* keep it neat */
+  justify-self: center;      /* center it */
+}
+
+/* Center the last area card (e.g., Sports) on its own row */
+.areas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.areas-grid > .card:last-child{
+  grid-column: 1 / -1;
+  max-width: 520px;
+  justify-self: center;
+}
+
+/* Responsive: keep centering on small screens (single column anyway) */
+@media (max-width: 900px){
+  .intro-events-block .upcoming-mini { grid-template-columns: 1fr; }
+  .areas-grid { grid-template-columns: 1fr; }
+}
+
+/* Center the single last card in the upcoming mini grid */
+.intro-events-block .upcoming-mini {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.intro-events-block .upcoming-mini > .card:last-child{
+  grid-column: 1 / -1;      /* span full row */
+  max-width: 520px;          /* keep it neat */
+  justify-self: center;      /* center it */
+}
+
+/* Center the last area card (e.g., Sports) on its own row */
+.areas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.areas-grid > .card:last-child{
+  grid-column: 1 / -1;
+  max-width: 520px;
+  justify-self: center;
+}
+
+/* Responsive: keep centering on small screens (single column anyway) */
+@media (max-width: 900px){
+  .intro-events-block .upcoming-mini { grid-template-columns: 1fr; }
+  .areas-grid { grid-template-columns: 1fr; }
 }

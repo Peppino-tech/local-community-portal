@@ -1,37 +1,23 @@
-<%- include('partials/header', { title: areaName + ' — Community Area', active }) %>
+<%- include('partials/header', { title: area.name + ' — Community Area', active }) %>
 
-<section class="container">
-  <h1><%= areaName %> — Activities & Events</h1>
+<section class="container page-content">
+  <h1><%= area.name %> — Activities & Events</h1>
 
-  <form id="areaFilters" class="filters" aria-label="Area filters">
-    <label>
-      Year
-      <select id="af-year" name="year">
-        <option value="">All</option>
-        <% const thisYear = new Date().getFullYear(); for (let y = thisYear + 1; y >= thisYear - 4; y--) { %>
-          <option value="<%= y %>"><%= y %></option>
-        <% } %>
-      </select>
-    </label>
-
-    <label>
-      Show
-      <select id="af-past" name="past">
-        <option value="">All</option>
-        <option value="false" selected>Upcoming</option>
-        <option value="true">Past</option>
-      </select>
-    </label>
-  </form>
-
-  <div id="area-results" class="card-grid" aria-live="polite" aria-busy="true">
-    <p>Loading <%= areaName %> events…</p>
-  </div>
+  <% if (listings && listings.length) { %>
+    <div class="card-grid">
+      <% listings.forEach(ev => { %>
+        <a class="card" href="/events/<%= ev.id %>">
+          <h3><%= ev.title %></h3>
+          <p class="meta"><%= ev.date %></p>
+          <% if (ev.summary) { %>
+            <p><%= ev.summary %></p>
+          <% } %>
+        </a>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <p>No activities or events are currently listed for this area.</p>
+  <% } %>
 </section>
-
-<script>
-  window.__AREA_NAME__ = "<%= areaName %>";
-</script>
-<script src="/js/area.js" defer></script>
 
 <%- include('partials/footer') %>
