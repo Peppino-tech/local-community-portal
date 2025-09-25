@@ -1,6 +1,6 @@
 <%- include('partials/header', { title: 'Local Community Portal', active: 'home' }) %>
 
-<!-- INTRO: welcome copy only (single column) -->
+<!-- INTRO: centered welcome -->
 <section class="intro-panel">
   <div class="container intro-inner one-col">
     <div class="intro-copy">
@@ -14,7 +14,7 @@
   </div>
 </section>
 
-<!-- EVENTS: featured card + small upcoming cards underneath the intro -->
+<!-- EVENTS: featured card + small upcoming cards -->
 <section class="container intro-events-block">
   <% if (featured) { %>
     <article class="card highlight" style="margin-bottom:12px;">
@@ -50,24 +50,52 @@
   </div>
 </section>
 
-<!-- AREAS: simple grid of area cards -->
-<section class="container page-content" style="background: transparent; box-shadow: none;">
-  <h2 style="text-align:center; margin-bottom:.25rem;">Explore Community Areas</h2>
-  <p class="muted" style="text-align:center; margin-bottom:1rem;">Browse activities and services by category.</p>
+<!-- AREAS: card panel wrapper + tidy 2×2 grid (Sports+Health on top) -->
+<section class="areas-panel">
+  <div class="container">
+    <div class="card areas-panel-inner">
+      <h2>Explore Community Areas</h2>
+      <p class="muted">Browse activities and services by category.</p>
 
-  <div class="grid">
-    <% (areas || []).forEach(a => { 
-         const name = a.name;
-         // Create friendly slug for Arts & Culture and otherwise use lowercase name
-         const slug = /arts/i.test(name) && /culture|&/i.test(name)
-           ? 'arts-and-culture'
-           : name.toLowerCase();
-    %>
-      <a href="/areas/<%= slug %>" class="card">
-        <h3><%= name %></h3>
-        <p>See listings and events in <%= name %>.</p>
-      </a>
-    <% }) %>
+      <%
+        // Build a lookup by lowercased name
+        const byName = new Map((areas || []).map(a => [String(a.name||'').toLowerCase(), a]));
+
+        // Find Arts even if named slightly differently
+        function findArts(){
+          return byName.get('arts & culture')
+              || byName.get('arts and culture')
+              || byName.get('arts')
+              || null;
+        }
+
+        const sports    = byName.get('sports')    || null;
+        const health    = byName.get('health')    || null;
+        const education = byName.get('education') || null;
+        const arts      = findArts();
+
+        // Desired order
+        const ordered = [sports, health, arts, education].filter(Boolean);
+
+        // Slug helper (normalises Arts & Culture)
+        function areaSlug(name){
+          return /arts/i.test(name) && /culture|&/i.test(name)
+            ? 'arts-and-culture'
+            : String(name).toLowerCase();
+        }
+      %>
+
+      <div class="areas-wrap">
+        <div class="areas-grid-2x2">
+          <% ordered.forEach(a => { %>
+            <a href="/areas/<%= areaSlug(a.name) %>" class="card area-card">
+              <h3><%= a.name %></h3>
+              <p>See listings and events in <%= a.name %>.</p>
+            </a>
+          <% }) %>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
