@@ -1,28 +1,22 @@
 <%- include('partials/header', { title: 'Activity • Local Community Portal', active: 'activity' }) %>
 
-<section class="container page-content">
-  <h1 id="quiz-title">Sports Date Quiz</h1>
-  <p id="quiz-desc" class="subtitle">
-    Pick the correct date for each sports-related event. No page reloads; fully keyboard friendly.
-  </p>
+<section class="activity-hero">
+  <div class="container activity-wrapper">
+    <h1>Activity</h1>
+    <p class="intro">🎉 Test how much you know about upcoming community events!</p>
 
-  <!-- Live quiz region -->
-  <div
-    id="quiz"
-    class="card"
-    role="region"
-    aria-labelledby="quiz-title"
-    aria-describedby="quiz-desc"
-    aria-live="polite"
-  ></div>
+    <div class="scoreboard">
+      <p>Score: <span id="score">0</span></p>
+      <p>Best: <span id="best">0</span></p>
+      <button id="restart" type="button" class="btn-outline">Restart quiz</button>
+    </div>
 
-  <!-- Stats / controls -->
-  <div class="card quiz-stats">
-    <p><strong>Score:</strong> <span id="score">0</span></p>
-    <p><strong>Best:</strong> <span id="best">0</span></p>
-    <button id="restart" type="button" aria-controls="quiz" aria-label="Restart the quiz">Restart</button>
+    <!-- Quiz container -->
+    <div id="quiz" class="quiz-box"></div>
   </div>
 </section>
 
+<!-- Link the JS -->
 <script src="/js/activity.js" defer></script>
+
 <%- include('partials/footer') %>

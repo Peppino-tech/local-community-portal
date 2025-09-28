@@ -1,23 +1,36 @@
-<%- include('partials/header', { title: area.name + ' — Community Area', active }) %>
+<%- include('partials/header', { title: (area && area.name ? area.name + ' • ' : '') + 'Local Community Portal', active: active }) %>
 
 <section class="container page-content">
-  <h1><%= area.name %> — Activities & Events</h1>
+  <h1><%= area && area.name ? area.name : 'Area' %> — Activities & Events</h1>
 
-  <% if (listings && listings.length) { %>
-    <div class="card-grid">
-      <% listings.forEach(ev => { %>
-        <a class="card" href="/events/<%= ev.id %>">
-          <h3><%= ev.title %></h3>
-          <p class="meta"><%= ev.date %></p>
-          <% if (ev.summary) { %>
-            <p><%= ev.summary %></p>
-          <% } %>
+  <div class="card-grid">
+    <% if ((listings || []).length) { %>
+      <% listings.forEach(function(ev){ 
+           // fallback image per area, like on Events page
+           var nm   = (area && area.name) ? area.name : 'Sports';
+           var slug = /arts/i.test(nm) ? 'arts-and-culture' : nm.toLowerCase();
+           var img  = ev.image_url || ('/images/areas/' + slug + '.jpg');
+      %>
+        <a class="card tile" href="/events/<%= ev.id %>">
+          <div class="tile-media" style="--bg:url('<%= img %>')"></div>
+          <div class="tile-body">
+            <h3><%= ev.title %></h3>
+            <p class="meta">
+              <time datetime="<%= ev.date %>">
+                <%= new Date(ev.date).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }) %>
+              </time>
+              <span class="badge <%= ev.isPast ? 'badge-past' : 'badge-upcoming' %>">
+                <%= ev.isPast ? 'Past' : 'Upcoming' %>
+              </span>
+            </p>
+            <% if (ev.summary) { %><p><%= ev.summary %></p><% } %>
+          </div>
         </a>
-      <% }) %>
-    </div>
-  <% } else { %>
-    <p>No activities or events are currently listed for this area.</p>
-  <% } %>
+      <% }); %>
+    <% } else { %>
+      <p class="muted">No activities or events are currently listed for this area.</p>
+    <% } %>
+  </div>
 </section>
 
 <%- include('partials/footer') %>

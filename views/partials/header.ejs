@@ -1,56 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-  <title><%= (typeof title !== 'undefined' && title) ? title : 'Local Community Portal' %></title>
-  <link rel="stylesheet" href="/css/style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <!-- Skip link for keyboard/screen reader users -->
-  <a href="#main" class="skip-link">Skip to main content</a>
+<a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Site Header -->
-  <header role="banner" class="site-header">
-    <div class="container nav-inner">
-      <!-- Brand -->
-      <a href="/" class="brand" aria-label="Local Community home">
-        <strong>Local</strong> Community
-      </a>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="site-logo" aria-label="Local Community home">
+      <strong>Local Community</strong>
+    </a>
 
-      <!-- Mobile hamburger -->
-      <button
-        class="nav-toggle"
-        type="button"
-        aria-label="Toggle navigation"
-        aria-expanded="false"
-        aria-controls="primary-navigation"
-      >
-        ☰
-      </button>
+    <nav id="primary-navigation" class="site-nav" aria-label="Primary">
+      <a href="/" class="<%= active === 'home' ? 'active' : '' %>">Home</a>
+      <a href="/areas/sports" class="<%= active === 'sports' ? 'active' : '' %>">Sports</a>
+      <a href="/areas/health" class="<%= active === 'health' ? 'active' : '' %>">Health</a>
+      <a href="/areas/education" class="<%= active === 'education' ? 'active' : '' %>">Education</a>
+      <a href="/areas/arts-and-culture" class="<%= active === 'arts' ? 'active' : '' %>">Arts &amp; Culture</a>
+      <a href="/events" class="<%= active === 'events' ? 'active' : '' %>">Events</a>
+      <a href="/faq" class="<%= active === 'faq' ? 'active' : '' %>">FAQ</a>
+      <a href="/contact" class="<%= active === 'contact' ? 'active' : '' %>">Contact</a>
+      <a href="/activity" class="<%= active === 'activity' ? 'active' : '' %>">Activity</a>
+    </nav>
 
-      <!-- Primary navigation -->
-      <nav
-        id="primary-navigation"
-        class="nav-links site-nav"
-        role="navigation"
-        aria-label="Primary"
-      >
-        <a href="/"                 class="<%= (active === 'home') ? 'active' : '' %>">Home</a>
-        <a href="/areas/sports"     class="<%= (active === 'sports') ? 'active' : '' %>">Sports</a>
-        <a href="/areas/health"     class="<%= (active === 'health') ? 'active' : '' %>">Health</a>
-        <a href="/areas/education"  class="<%= (active === 'education') ? 'active' : '' %>">Education</a>
-        <a href="/areas/arts"       class="<%= (active === 'arts') ? 'active' : '' %>">Arts &amp; Culture</a>
-        <a href="/events"           class="<%= (active === 'events') ? 'active' : '' %>">Events</a>
-        <a href="/faq"              class="<%= (active === 'faq') ? 'active' : '' %>">FAQ</a>
-        <a href="/contact"          class="<%= (active === 'contact') ? 'active' : '' %>">Contact</a>
-        <a href="/activity"         class="<%= (active === 'activity') ? 'active' : '' %>">Activity</a>
-      </nav>
-    </div>
-  </header>
+    <form action="/search" method="get" class="nav-search">
+      <label for="nav-search" class="visually-hidden">Search events</label>
+      <input id="nav-search" type="search" name="q" placeholder="Search events" value="<%= typeof q !== 'undefined' ? q : '' %>">
+    </form>
+  </div>
+</header>
 
-  <!-- Main content -->
-  <main id="main" role="main">
+<main id="main">

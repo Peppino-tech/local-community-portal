@@ -1,6 +1,14 @@
 <%- include('partials/header', { title: 'Local Community Portal', active: 'home' }) %>
 
-<!-- INTRO: centered welcome -->
+<%
+function areaSlug(name){
+  return /arts/i.test(name) && /culture|&/i.test(name)
+    ? 'arts-and-culture'
+    : String(name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
+%>
+
+<!-- INTRO -->
 <section class="intro-panel">
   <div class="container intro-inner one-col">
     <div class="intro-copy">
@@ -14,81 +22,86 @@
   </div>
 </section>
 
-<!-- EVENTS: featured card + small upcoming cards -->
+<!-- FEATURED / UPCOMING EVENTS -->
 <section class="container intro-events-block">
-  <% if (featured) { %>
-    <article class="card highlight" style="margin-bottom:12px;">
-      <h3 class="eyebrow">Live / Next up</h3>
-      <h2 class="card-title">
-        <a href="/events/<%= featured.id %>"><%= featured.title %></a>
-      </h2>
-      <p class="meta">
-        <strong>When:</strong>
-        <time datetime="<%= featured.date %>">
-          <%= new Date(featured.date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
-        </time>
-        <% if (featured.area) { %> • <strong>Area:</strong> <%= featured.area %><% } %>
-      </p>
-      <% if (featured.summary) { %><p><%= featured.summary %></p><% } %>
+  <% if (featured) { 
+       const fSlug = areaSlug(featured.area || "sports");
+       const fImg  = featured.image_url || ("/images/areas/" + fSlug + ".jpg");
+  %>
+    <article class="card highlight featured-card">
+      <div class="featured-media"
+           style="background-image: url('<%= fImg %>');"
+           aria-hidden="true"></div>
+      <div class="featured-body">
+        <h3 class="eyebrow">Live / Next up</h3>
+        <h2 class="card-title">
+          <a href="/events/<%= featured.id %>"><%= featured.title %></a>
+        </h2>
+        <p class="meta">
+          <strong>When:</strong>
+          <time datetime="<%= featured.date %>">
+            <%= new Date(featured.date).toLocaleDateString('en-GB',
+                { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
+          </time>
+          <% if (featured.area) { %> • <strong>Area:</strong> <%= featured.area %><% } %>
+        </p>
+        <% if (featured.summary) { %><p><%= featured.summary %></p><% } %>
+      </div>
     </article>
   <% } %>
 
   <div class="upcoming-mini">
-    <% (upcoming || []).forEach(ev => { %>
-      <article class="card mini">
-        <h4><a href="/events/<%= ev.id %>"><%= ev.title %></a></h4>
-        <p class="meta">
-          <strong>Date:</strong>
-          <time datetime="<%= ev.date %>">
-            <%= new Date(ev.date).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) %>
-          </time>
-          <% if (ev.area) { %> • <%= ev.area %><% } %>
-        </p>
-        <% if (ev.summary) { %><p><%= ev.summary %></p><% } %>
+    <% (upcoming || []).forEach(ev => { 
+         const slug = areaSlug(ev.area || "sports");
+         const img  = ev.image_url || ("/images/areas/" + slug + ".jpg");
+    %>
+      <article class="card mini has-media">
+        <div class="mini-media"
+             style="background-image: url('<%= img %>');"
+             aria-hidden="true"></div>
+        <div class="mini-body">
+          <h4><a href="/events/<%= ev.id %>"><%= ev.title %></a></h4>
+          <p class="meta">
+            <strong>Date:</strong>
+            <time datetime="<%= ev.date %>">
+              <%= new Date(ev.date).toLocaleDateString('en-GB',
+                  { day:'numeric', month:'long', year:'numeric' }) %>
+            </time>
+            <% if (ev.area) { %> • <%= ev.area %><% } %>
+          </p>
+          <% if (ev.summary) { %><p><%= ev.summary %></p><% } %>
+        </div>
       </article>
     <% }) %>
   </div>
 </section>
 
-<!-- AREAS: card panel wrapper + tidy 2×2 grid (Sports+Health on top) -->
+<!-- EXPLORE COMMUNITY AREAS -->
 <section class="areas-panel">
   <div class="container">
     <div class="card areas-panel-inner">
       <h2>Explore Community Areas</h2>
       <p class="muted">Browse activities and services by category.</p>
 
-      <%
-        // Build a lookup by lowercased name
-        const byName = new Map((areas || []).map(a => [String(a.name||'').toLowerCase(), a]));
-
-        // Find Arts even if named slightly differently
-        function findArts(){
-          return byName.get('arts & culture')
-              || byName.get('arts and culture')
-              || byName.get('arts')
-              || null;
-        }
-
-        const sports    = byName.get('sports')    || null;
-        const health    = byName.get('health')    || null;
-        const education = byName.get('education') || null;
-        const arts      = findArts();
-
-        // Desired order
-        const ordered = [sports, health, arts, education].filter(Boolean);
-
-        // Slug helper (normalises Arts & Culture)
-        function areaSlug(name){
-          return /arts/i.test(name) && /culture|&/i.test(name)
-            ? 'arts-and-culture'
-            : String(name).toLowerCase();
-        }
+      <% const byName = new Map((areas || []).map(a => [String(a.name||'').toLowerCase(), a]));
+         function findArts(){
+           return byName.get('arts & culture')
+               || byName.get('arts and culture')
+               || byName.get('arts') || null;
+         }
+         const sports    = byName.get('sports')    || null;
+         const health    = byName.get('health')    || null;
+         const education = byName.get('education') || null;
+         const arts      = findArts();
+         const ordered   = [sports, health, arts, education].filter(Boolean);
       %>
 
       <div class="areas-wrap">
         <div class="areas-grid-2x2">
           <% ordered.forEach(a => { %>
             <a href="/areas/<%= areaSlug(a.name) %>" class="card area-card">
+              <img src="/images/areas/<%= areaSlug(a.name) %>.jpg"
+                   alt="<%= a.name %>" class="area-thumb"/>
               <h3><%= a.name %></h3>
               <p>See listings and events in <%= a.name %>.</p>
             </a>

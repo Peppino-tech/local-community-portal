@@ -1,0 +1,44 @@
+<%- include('partials/header', { title: (q ? `Search • ${q}` : 'Search') + ' • Local Community Portal', active: '' , q }) %>
+
+<section class="container page-content">
+  <h1>Search</h1>
+  <form action="/search" method="get" class="search-form">
+    <label for="q" class="visually-hidden">Search events</label>
+    <input id="q" name="q" type="search" placeholder="Search events…" value="<%= q %>" autofocus />
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+
+  <% if (!q) { %>
+    <p class="muted" style="margin-top: .75rem;">Try keywords like “market”, “workshop”, “football”…</p>
+  <% } %>
+
+  <% if (q) { %>
+    <h2 class="results-title">Results for “<%= q %>”</h2>
+
+    <% if (!results || results.length === 0) { %>
+      <p class="muted">No results. Try a different keyword.</p>
+    <% } else { %>
+      <div class="card-grid">
+        <% results.forEach(r => { %>
+          <a class="card" href="/events/<%= r.id %>">
+            <h3><%= r.title %></h3>
+            <p class="meta">
+              <time datetime="<%= r.date %>">
+                <%= new Date(r.date).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' }) %>
+              </time>
+              <% if (r.area) { %> · <%= r.area %><% } %>
+              <% if (r.isPast === 1 || r.isPast === true) { %>
+                <span class="badge badge-past">Past</span>
+              <% } else { %>
+                <span class="badge badge-upcoming">Upcoming</span>
+              <% } %>
+            </p>
+            <% if (r.summary) { %><p><%= r.summary %></p><% } %>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

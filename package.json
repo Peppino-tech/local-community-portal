@@ -1,11 +1,10 @@
 {
   "name": "local-community-portal",
   "version": "1.0.0",
-  "description": "Local Community Portal - starter project",
+  "description": "Local Community Portal – starter project",
   "type": "module",
-  "main": "index.mjs",
   "scripts": {
-    "start": "node index.mjs",
+    "start": "node app.js",
     "setup-db": "node database/setup_db.js"
   },
   "dependencies": {
